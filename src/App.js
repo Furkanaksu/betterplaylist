@@ -7,7 +7,25 @@ let defaultStyle={
 }
 let fakeServerdata={
   user:{
-    name:'Furkan'
+    name:'Furkan',
+    Playlists:[
+      {
+        name:'Favorilerim',
+        sarki:['Friends  ','The song','Anne Marie']
+      },
+      {
+        name:'Haftalık Keşif',
+        sarki:['Manzara','The song','Hande Yener']  
+      },
+      {
+        name:'Haftalık Keşif',
+        sarki:['Manzara','The song','Hande Yener']
+         },
+      {
+        name:'Haftalık Keşif',
+        sarki:['Manzara','The song','Hande Yener']
+      }
+    ]
   }
 }
 class   Aggregate extends Component{
@@ -15,7 +33,7 @@ class   Aggregate extends Component{
     
     return(
       <div style={{...defaultStyle ,width:"40%", display:'inline-block'}}>
-        <h2>Number and Text</h2>
+        <h2>{this.props.Playlists && this.props.Playlists.length} Text</h2>
       </div>
     );
   }
@@ -48,24 +66,40 @@ class Playlist extends Component{
 }
 
 class App extends Component {
+  constructor(){
+    super();
+    this.state=({serverData:{}})
+  }
+  componentDidMount(){
+    setTimeout(()=> {
+      this.setState({serverData:fakeServerdata});
+    },1000);
+  }
   
   render() {
     return (
       <div className="App">
-        <h1 style={{...defaultStyle,'fontSize':'54px'}}>{fakeServerdata.user.name}'s Playlists</h1>
-        <Aggregate></Aggregate>
-        <Aggregate></Aggregate>
+      {this.state.serverData.user ?
+      <div>
+            <h1 style={{...defaultStyle,'font-size':'54px'}}>
+            {this.state.serverData.user.name}'s Playlists
+            </h1>
+         
+        
+        <Playlistcounter Playlists={this.state.serverData.user.Playlists}></Playlistcounter>
+              
+        <HoursCounter Playlists={this.state.serverData.user.Playlists}></HoursCounter>
+        
+      
         <Filter></Filter>
         <Playlist></Playlist>
         <Playlist></Playlist>
         <Playlist></Playlist>
         <Playlist></Playlist>
-        
-
-        
-        
-
-      </div>
+        </div>:<h1 style={{...defaultStyle}}>Loading...</h1>
+      }
+        </div>
+      
     );
   }
 }
