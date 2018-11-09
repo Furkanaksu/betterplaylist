@@ -11,29 +11,63 @@ let fakeServerdata={
     Playlists:[
       {
         name:'Favorilerim',
-        sarki:['Friends  ','The song','Anne Marie']
+        songs:[
+          {name:'Friends  ',duration:1345},
+          {name:'Ciao Adios  ',duration:9000},
+          {name:'Only Girl  ',duration:2222}
+        ]
+          
+      },
+      {
+        name:'Yıllık Keşif',
+        songs:[
+          {name:'Friends  ',duration:1345},
+          {name:'Ciao Adios  ',duration:9000},
+          {name:'Only Girl  ',duration:2222}
+        ]  
       },
       {
         name:'Haftalık Keşif',
-        sarki:['Manzara','The song','Hande Yener']  
-      },
-      {
-        name:'Haftalık Keşif',
-        sarki:['Manzara','The song','Hande Yener']
+        songs:[
+          {name:'Friends  ',duration:1345},
+          {name:'Ciao Adios  ',duration:9000},
+          {name:'Only Girl  ',duration:2222}
+        ]
          },
       {
-        name:'Haftalık Keşif',
-        sarki:['Manzara','The song','Hande Yener']
+        name:'Aylık Keşif',
+        songs:[
+          {name:'Friends  ',duration:1345},
+          {name:'Ciao Adios  ',duration:9000},
+          {name:'Only Girl  ',duration:2222}
+        ]
       }
     ]
   }
 }
-class   Aggregate extends Component{
+class Playlistcounter extends Component{
   render(){
     
     return(
       <div style={{...defaultStyle ,width:"40%", display:'inline-block'}}>
-        <h2>{this.props.Playlists && this.props.Playlists.length} Text</h2>
+        <h2>{this.props.Playlists.length} Playlists</h2>
+      </div>
+    );
+  }
+}
+class HoursCounter extends Component{
+  render(){
+    let allSongs = this.props.Playlists.reduce((songs,eachPlaylists)=> {
+      return songs.concat(eachPlaylists.songs)
+     },[] )
+    let totalDuration = allSongs.reduce((sum,eachSong)=> {
+      return sum + eachSong.duration
+    },0)
+
+    
+    return(
+      <div style={{...defaultStyle ,width:"40%", display:'inline-block'}}>
+        <h2>{totalDuration} Hours</h2>
       </div>
     );
   }
@@ -56,11 +90,11 @@ class Playlist extends Component{
   {
     return (<div style={{...defaultStyle,display:'inline-block',width:"25%"}}>
       <img/>
-      <h3>Playlist Name</h3>
+      <h3>{this.props.name}</h3>
       <ul><li>Song 1</li><li>Song 2</li>
       <li>Song 3</li><li>Song 3</li></ul>
       </div>
-    )
+    );
   }
    
 }
@@ -77,29 +111,30 @@ class App extends Component {
   }
   
   render() {
+
+    console.log("this.state.serverData", this.state.serverData);
     return (
       <div className="App">
-      {this.state.serverData.user ?
-      <div>
-            <h1 style={{...defaultStyle,'font-size':'54px'}}>
-            {this.state.serverData.user.name}'s Playlists
-            </h1>
-         
-        
-        <Playlistcounter Playlists={this.state.serverData.user.Playlists}></Playlistcounter>
-              
-        <HoursCounter Playlists={this.state.serverData.user.Playlists}></HoursCounter>
-        
-      
-        <Filter></Filter>
-        <Playlist></Playlist>
-        <Playlist></Playlist>
-        <Playlist></Playlist>
-        <Playlist></Playlist>
-        </div>:<h1 style={{...defaultStyle}}>Loading...</h1>
-      }
-        </div>
-      
+        {
+          this.state.serverData.user ? (
+            <div>
+              <h1 style={{...defaultStyle,'font-size':'54px'}}>
+              {this.state.serverData.user.name}'s Playlists
+              </h1>
+              <Playlistcounter Playlists={this.state.serverData.user.Playlists}></Playlistcounter>
+              <HoursCounter Playlists={this.state.serverData.user.Playlists}></HoursCounter>
+              <Filter></Filter>
+              {
+                this.state.serverData.user.Playlists.map(playlist => (
+                  <Playlist name={playlist.name}/>
+                ))
+              }
+            </div>
+          ) : (
+            <h1 style={{...defaultStyle}}>Loading...</h1>
+          )
+        }
+      </div>
     );
   }
 }
